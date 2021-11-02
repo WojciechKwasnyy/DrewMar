@@ -1,286 +1,99 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MahApps.Metro.Controls;
-using System.ComponentModel;
-using System.IO;
-using System.Globalization;
-using ClosedXML.Excel;
+using DrewMar.Domain;
 
 namespace DrewMar
 {
-    public class WoodenBoard
-    {
-        public double Length { get; set; }
-        public double Width { get; set; }
-        public double Thick { get; set; }
-
-        public string Worker { get; set; }
-        public double Weight => Length * Width * Thick;
-
-    }
-    public class Package
-    {
-        public double packageCapacity;
-        public List<WoodenBoard> listOfCurrentDesks = new List<WoodenBoard>();
-        public List<String> listOfDesksMakers = new List<String>();
-
-        public Package(double capacity) => packageCapacity = capacity;
-
-
-        public double capacity
-        {
-            get => packageCapacity;
-        }
-        public void addDeskToList(WoodenBoard woodenBoard)
-        {
-            listOfCurrentDesks.Add(woodenBoard);
-            packageCapacity += woodenBoard.Weight;
-            packageCapacity = Math.Round(packageCapacity, 4);
-        }
-        public void deleteLastDeskFromList(WoodenBoard woodenBoard)
-        {
-            if (listOfCurrentDesks != null)
-            {
-                listOfCurrentDesks.RemoveAt(listOfCurrentDesks.Count - 1);
-                packageCapacity -= woodenBoard.Weight;
-                packageCapacity = Math.Round(packageCapacity, 4);
-            }
-            else
-            {
-                AutoClosingMessageBox.Show("Nie można usunąć deski, paczka pusta!", "Caption", 2000);
-            }
-        }
-        public List<String> assignWorkersToPackage(List<String> list)
-        {
-            List<String> tmp = list.Distinct().ToList();
-             
-            return tmp;
-        }
-        public String printAssignedWorkers()
-        {
-            String s = "";
-            foreach (var item in listOfDesksMakers)
-            {
-                s += item + " ";
-            }
-            return s;
-        }
-
-    }
-
-    class Transport
-    {
-        public double transportCapacity = 0;
-        public int numberOfPackages => listOfCurrentPackages.Count() + 1;
-        public List<Package> listOfCurrentPackages = new List<Package>();
-        public IXLWorkbook workbook = new XLWorkbook();
-        public readonly IXLWorksheet _worksheet = null;
-
-        public int currentExcelCellVerticalPosition = 1;
-        public int currentExcelCellHorizontalPosition = 1;
-
-        public Transport(double capacity)
-        {
-            _worksheet = workbook.Worksheets.Add("paczki");
-            transportCapacity = capacity;
-        }
-        public double capacity
-        {
-            get => transportCapacity;
-        }
-        public void addPackageToTransportList(Package package)
-        {
-            transportCapacity += package.packageCapacity;
-            listOfCurrentPackages.Add(package);
-        }
-        public void updateCurrentExcelCellPosition(int vertical, int horizontal)
-        {
-            if (currentExcelCellHorizontalPosition + horizontal < 17)
-            {
-                currentExcelCellVerticalPosition += vertical;
-                currentExcelCellHorizontalPosition += horizontal;
-            }
-            else
-            {
-                currentExcelCellHorizontalPosition = 2;
-                currentExcelCellVerticalPosition += 1;
-            }
-        }
-        public void updateCurrentExcelCellPositionAfterPackage(int numberOfDesks, int startCellVert, int startCellHor)
-        {
-            if (numberOfDesks < 31)
-            {
-                currentExcelCellVerticalPosition = startCellVert + 6;
-            }
-            else
-            {
-                currentExcelCellVerticalPosition += 2;
-            }
-
-            currentExcelCellHorizontalPosition -= (currentExcelCellHorizontalPosition - 1);
-        }
-    }
-    public class AutoClosingMessageBox
-    {
-        System.Threading.Timer _timeoutTimer;
-        string _caption;
-        AutoClosingMessageBox(string text, string caption, int timeout)
-        {
-            _caption = caption;
-            _timeoutTimer = new System.Threading.Timer(OnTimerElapsed,
-                null, timeout, System.Threading.Timeout.Infinite);
-            using (_timeoutTimer)
-                MessageBox.Show(text, caption);
-        }
-        public static void Show(string text, string caption, int timeout)
-        {
-            new AutoClosingMessageBox(text, caption, timeout);
-        }
-        void OnTimerElapsed(object state)
-        {
-            IntPtr mbWnd = FindWindow("#32770", _caption);
-            if (mbWnd != IntPtr.Zero)
-                SendMessage(mbWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-            _timeoutTimer.Dispose();
-        }
-        const int WM_CLOSE = 0x0010;
-        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-        [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-        static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
-    }
-
     public partial class MainWindow : MetroWindow
     {
         private Transport _transport;
         private Package _package;
-        private int numberOfTransports;
         private TextBox activeTextBox;
 
         public MainWindow()
         {
             InitializeComponent();
-            _transport = new Transport(0);
-
-            _package = new Package(0);
+            _transport = new Transport();
+            _package = new Package();
 
             comboBox.Items.Add("DUDEK");
             comboBox.Items.Add("ZAWADA");
             comboBox.Items.Add("TEST");
 
-            numberOfTransports = 1;
-
             activeTextBox = lengthOfADeskTextBox;
-            lengthOfADeskTextBox.BorderBrush = System.Windows.Media.Brushes.Black;
-            thicknessOfADeskTextBox.BorderBrush = System.Windows.Media.Brushes.Black;
-            widthOfADeskTextBox.BorderBrush = System.Windows.Media.Brushes.Black;
-            setActiveTextBox();
+            lengthOfADeskTextBox.BorderBrush = Brushes.Black;
+            thicknessOfADeskTextBox.BorderBrush = Brushes.Black;
+            widthOfADeskTextBox.BorderBrush = Brushes.Black;
+            SetActiveTextBox();
         }
 
-
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (lengthOfADeskTextBox.Text != "" & thicknessOfADeskTextBox.Text != "" & widthOfADeskTextBox.Text != "")
-            {
-                var desk = new WoodenBoard();
-
-                desk.Length = Double.Parse(lengthOfADeskTextBox.Text) / 10;
-                desk.Width = (0.01) * Double.Parse(widthOfADeskTextBox.Text);
-                desk.Thick = (0.001) * Double.Parse(thicknessOfADeskTextBox.Text);
-                desk.Worker = comboBox.Text;
-
-                //lengthOfADeskTextBox.Text = "";
-                //widthOfADeskTextBox.Text = "";
-
-
-                desksList.Items.Add("DŁ: " + desk.Length);
-                desksList.Items.Add("SZ: " + desk.Width);
-                desksList.Items.Add("GR: " + desk.Thick);
-                desksList.Items.Add("___________");
-
-                _package.addDeskToList(desk);
-                _package.listOfDesksMakers.Add(desk.Worker);
-                  
-                actualPackageWeightTextBox.Text = Convert.ToString(_package.capacity);
-                actualTransportWeightTextBox.Text = Convert.ToString(_transport.capacity + _package.capacity);
-                numberOfDesksTextBox.Text = Convert.ToString(_package.listOfCurrentDesks.Count);
-                //AutoClosingMessageBox.Show("Poprawnie dodano deske", "Caption", 500);
-                setActiveTextBox();
-
-                if (VisualTreeHelper.GetChildrenCount(desksList) > 0)
-                {
-                    Border border = (Border)VisualTreeHelper.GetChild(desksList, 0);
-                    ScrollViewer scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
-                    scrollViewer.ScrollToBottom();
-                }
-
-                //this.desksList.ScrollIntoView(this.desksList.Items.Count - 1);
-
-            }
-            else
+            if (string.IsNullOrEmpty(lengthOfADeskTextBox.Text) 
+                || string.IsNullOrEmpty(thicknessOfADeskTextBox.Text) 
+                || string.IsNullOrEmpty(widthOfADeskTextBox.Text))
             {
                 AutoClosingMessageBox.Show("Błąd dodawania deski - błędne dane", "Caption", 5000);
+                return;
+            }
+
+            var desk = new WoodenBoard
+            {
+                Length = double.Parse(lengthOfADeskTextBox.Text) / 10,
+                Width = (0.01) * double.Parse(widthOfADeskTextBox.Text),
+                Thick = (0.001) * double.Parse(thicknessOfADeskTextBox.Text),
+                Worker = comboBox.Text
+            };
+
+            if (FeatureFlags.OperationsConfirmationsEnabled)
+            {
+                widthOfADeskTextBox.Text = "";
+            }
+
+            desksList.Items.Add("DŁ: " + desk.Length);
+            desksList.Items.Add("SZ: " + desk.Width);
+            desksList.Items.Add("GR: " + desk.Thick);
+            desksList.Items.Add("___________");
+
+            _package.AddDeskToList(desk);
+            _package.listOfDesksMakers.Add(desk.Worker);
+                  
+            actualPackageWeightTextBox.Text = Convert.ToString(_package.Capacity);
+            actualTransportWeightTextBox.Text = Convert.ToString(_transport.Capacity + _package.Capacity);
+            numberOfDesksTextBox.Text = Convert.ToString(_package.desks.Count);
+
+            if (FeatureFlags.OperationsConfirmationsEnabled)
+            {
+                AutoClosingMessageBox.Show("Poprawnie dodano deske", "Caption", 500);
+            }
+            
+            SetActiveTextBox();
+
+            if (VisualTreeHelper.GetChildrenCount(desksList) > 0)
+            {
+                var border = (Border)VisualTreeHelper.GetChild(desksList, 0);
+                var scrollViewer = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
+                scrollViewer.ScrollToBottom();
             }
         }
 
-        private void dodajPaczkeButton_Click(object sender, RoutedEventArgs e)
+        private void DodajPaczkeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_package.listOfCurrentDesks.Count != 0)
+            if (_package.desks.Count != 0)
             {
-                _package.listOfDesksMakers = _package.assignWorkersToPackage(_package.listOfDesksMakers);
-                _transport.addPackageToTransportList(_package);
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition, _transport.currentExcelCellHorizontalPosition).Value = "Paczka nr. " + _transport.listOfCurrentPackages.Count.ToString();
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition + 1, _transport.currentExcelCellHorizontalPosition).Value = "Grubość = " + _package.listOfCurrentDesks[0].Thick.ToString();
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition + 2, _transport.currentExcelCellHorizontalPosition).Value = "Sztuki = " + _package.listOfCurrentDesks.Count;
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition + 3, _transport.currentExcelCellHorizontalPosition).Value = "Masa paczki = " + _package.packageCapacity;                
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition + 4, _transport.currentExcelCellHorizontalPosition).Value = _package.printAssignedWorkers();
-                _transport.updateCurrentExcelCellPosition(0, 1);
+                _package.listOfDesksMakers = _package.AssignWorkersToPackage(_package.listOfDesksMakers);
+                _transport.AddPackage(_package);
 
-                _transport._worksheet.PageSetup.PrintAreas.Clear();
-                _transport._worksheet.PageSetup.PrintAreas.Add("A1:P200");
-
-
-
-                WoodenBoard last = _package.listOfCurrentDesks.Last();
-                int startCellVert = _transport.currentExcelCellVerticalPosition;
-                int startCellHor = _transport.currentExcelCellHorizontalPosition;
-
-                foreach (WoodenBoard item in _package.listOfCurrentDesks)
-                {
-                    _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition, _transport.currentExcelCellHorizontalPosition).Value = item.Length;
-                    _transport.updateCurrentExcelCellPosition(1, 0);
-                    _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition, _transport.currentExcelCellHorizontalPosition).Value = item.Width;
-
-                    if (item == last)
-                    {
-                        _transport.updateCurrentExcelCellPositionAfterPackage(_package.listOfCurrentDesks.Count, startCellVert, startCellHor);
-                        _transport._worksheet.Row(_transport.currentExcelCellVerticalPosition - 1).Height = 8;
-                    }
-                    else
-                    {
-                        _transport.updateCurrentExcelCellPosition((-1), 1);
-                    }
-                }
-
-                _package = new Package(0);
+                _package = new Package();
                 desksList.Items.Clear();
 
-                numberOfPackagesTextBox.Text = Convert.ToString(_transport.numberOfPackages);
+                numberOfPackagesTextBox.Text = Convert.ToString(_transport.PackagesCount);
                 actualPackageWeightTextBox.Text = "0";
                 numberOfDesksTextBox.Text = "0";
-                if (_transport.numberOfPackages >= 16)
+                if (_transport.PackagesCount >= 16)
 
                 {
                     MessageBox.Show("Limit Paczek! Dodaj Transport!", "Dodawanie paczki", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -289,116 +102,39 @@ namespace DrewMar
                 {
                     AutoClosingMessageBox.Show("Dodano paczke", "Caption", 1000);
                 }
-
-
             }
             else
             {
                 MessageBox.Show("Nie dodano paczki - paczka pusta.", "Błąd dodania paczki", MessageBoxButton.OK, MessageBoxImage.Information);
             }
-            setActiveTextBox();
+            SetActiveTextBox();
         }
 
-        private void wagaTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
-        private void dodajDoTransportuButton_Click(object sender, RoutedEventArgs e)
+        private void DodajDoTransportuButton_Click(object sender, RoutedEventArgs e)
         {
             var result = MessageBox.Show("Czy na pewno chcesz dodać transport ? ", "Dodawanie transportu", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            if (_transport.listOfCurrentPackages.Count > 0 & result == MessageBoxResult.Yes)
+            if (_transport.packages.Count > 0 & result == MessageBoxResult.Yes)
             {
+                _transport.Complete();
 
-                string path = @"C:\Users\Wojtek\Desktop\Transport" + numberOfTransports + ".txt";
-                string pathCatepillar = @"C:\Users\Cat\Desktop\Transporty\Transport" + numberOfTransports + ".txt";
+                var fileDateFormat = "yyyy-dd-M-HH-mm";
+                var filePath = $@"C:\Users\Cat\Desktop\Transporty\Transport - {_transport.CompletionTime.ToString(fileDateFormat)}.xlsx";
 
-                DateTime dateTime = DateTime.UtcNow.Date;
-                DateTime dateWithTime = DateTime.UtcNow.AddHours(1);
-
-                String dateAsString = dateTime.ToString("d");
-
-                string excelPath = @"C:\Users\Wojtek\Desktop\Transporty\Transport - " + numberOfTransports + " " + dateAsString + ".xlsx";
-                string excelPathCatepillar = @"C:\Users\Cat\Desktop\Transporty\Transport - " + numberOfTransports + " " + dateAsString + ".xlsx";
-                _transport._worksheet.Columns("A:P").AdjustToContents();
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition, _transport.currentExcelCellHorizontalPosition).Value = "Transport skompletowany";
-                _transport.updateCurrentExcelCellPosition(1, 0);
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition, _transport.currentExcelCellHorizontalPosition).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Left;
-                _transport._worksheet.Cell(_transport.currentExcelCellVerticalPosition, _transport.currentExcelCellHorizontalPosition).Value = dateWithTime;
-
-                _transport.updateCurrentExcelCellPosition(2, 0);
-
-                _transport._worksheet.SheetView.ZoomScale = 75;
-
-                _transport._worksheet.PageSetup.AdjustTo(80);
-
-                try
+                if (!FeatureFlags.ProductionModeEnabled)
                 {
-                    var fileInfo = new FileInfo(path);
-                    using (var streamWriter = fileInfo.CreateText())
-
-
-                    {
-                        streamWriter.WriteLine("Transport " + numberOfTransports.ToString());
-                        int index = 0;
-                        String str = "";
-
-                        foreach (var item in _transport.listOfCurrentPackages)
-                        {
-                            index++;
-                            streamWriter.WriteLine("Paczka " + index.ToString() + ": ilosc desek w paczce - " + item.listOfCurrentDesks.Count + " | waga paczki - " + item.packageCapacity);
-                            streamWriter.Write("Dlugosc - ");
-                            foreach (WoodenBoard itemm in item.listOfCurrentDesks)
-                            {
-                                str = itemm.Length.ToString();
-                                streamWriter.Write(str + " ");
-                            }
-                            streamWriter.WriteLine();
-                            streamWriter.Write("Szerokosc - ");
-                            foreach (WoodenBoard itemm in item.listOfCurrentDesks)
-                            {
-                                streamWriter.Write(itemm.Width.ToString() + " ");
-                            }
-                            streamWriter.WriteLine();
-                            streamWriter.Write("Grubosc - ");
-                            foreach (WoodenBoard itemm in item.listOfCurrentDesks)
-                            {
-                                str = itemm.Thick.ToString();
-                                streamWriter.Write(str + " ");
-                            }
-                            streamWriter.WriteLine();
-                            streamWriter.Write("Pracownik - ");
-                            foreach (WoodenBoard itemm in item.listOfCurrentDesks)
-                            {
-                                str = itemm.Worker;
-                                streamWriter.Write(str + " ");
-                            }
-
-                            streamWriter.WriteLine();
-                            streamWriter.WriteLine();
-                        }
-
-                        streamWriter.WriteLine("Calkowita waga transportu: " + _transport.transportCapacity);
-
-                    }
-                }
-                catch (Exception Ex)
-                {
-                    Console.WriteLine(Ex.ToString());
+                    filePath = $@"C:\Users\Wojtek\Desktop\Transporty\Transport - {_transport.CompletionTime.ToString(fileDateFormat)}.xlsx";
                 }
 
+                IFileExporter fileExporter = new XlsxFileExporter();
+                fileExporter.Export(filePath, _transport);
 
+                _transport = new Transport();
 
-                _transport.workbook.SaveAs(excelPath);
-                numberOfTransports++;
-                _transport = new Transport(0);
-
-
-                numberOfPackagesTextBox.Text = Convert.ToString(_transport.numberOfPackages);
-                actualTransportWeightTextBox.Text = Convert.ToString(_transport.transportCapacity);
+                numberOfPackagesTextBox.Text = Convert.ToString(_transport.PackagesCount);
+                actualTransportWeightTextBox.Text = Convert.ToString(_transport.Capacity);
                 AutoClosingMessageBox.Show("Dodano nowy transport", "Caption", 2000);
-                setActiveTextBox();
+                SetActiveTextBox();
             }
             else if (result == MessageBoxResult.No)
             {
@@ -410,11 +146,11 @@ namespace DrewMar
             }
         }
 
-        private void buttonDeleteLastDeskClicked(object sender, RoutedEventArgs e)
+        private void ButtonDeleteLastDeskClicked(object sender, RoutedEventArgs e)
         {
-            if (_package.listOfCurrentDesks.Count > 0)
+            if (_package.desks.Count > 0)
             {
-                _package.deleteLastDeskFromList(_package.listOfCurrentDesks[_package.listOfCurrentDesks.Count - 1]);
+                _package.DeleteLastDeskFromList(_package.desks[_package.desks.Count - 1]);
                 desksList.Items.RemoveAt(desksList.Items.Count - 1);
                 desksList.Items.RemoveAt(desksList.Items.Count - 1);
                 desksList.Items.RemoveAt(desksList.Items.Count - 1);
@@ -422,9 +158,9 @@ namespace DrewMar
 
                 _package.listOfDesksMakers.RemoveAt(_package.listOfDesksMakers.Count - 1);
 
-                actualPackageWeightTextBox.Text = Convert.ToString(_package.capacity);
-                actualTransportWeightTextBox.Text = Convert.ToString(_transport.capacity + _package.capacity);
-                numberOfDesksTextBox.Text = Convert.ToString(_package.listOfCurrentDesks.Count);
+                actualPackageWeightTextBox.Text = Convert.ToString(_package.Capacity);
+                actualTransportWeightTextBox.Text = Convert.ToString(_transport.Capacity + _package.Capacity);
+                numberOfDesksTextBox.Text = Convert.ToString(_package.desks.Count);
                 AutoClosingMessageBox.Show("Usunięto ostatnią deskę", "Caption", 1000);
             }
             else
@@ -441,10 +177,9 @@ namespace DrewMar
                 var button = (Button)sender;
                 activeTextBox.Text += button.Content.ToString();
             }
-
         }
 
-        private void lenghtOfADeskTextBox_GotFocus(object sender, RoutedEventArgs e)
+        private void LenghtOfADeskTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             activeTextBox = (TextBox)sender;
         }
@@ -477,7 +212,7 @@ namespace DrewMar
             }
         }
 
-        private void deleteButtonClick(object sender, RoutedEventArgs e)
+        private void DeleteButtonClick(object sender, RoutedEventArgs e)
         {
             if (activeTextBox.Text.Length > 0)
             {
@@ -485,18 +220,13 @@ namespace DrewMar
             }
 
         }
-        private void setActiveTextBox()
+        private void SetActiveTextBox()
         {
             activeTextBox = lengthOfADeskTextBox;
 
             lengthOfADeskTextBox.BorderThickness = new Thickness(3, 3, 3, 3);
             thicknessOfADeskTextBox.BorderThickness = new Thickness(0.5, 0.5, 0.5, 0.5);
             widthOfADeskTextBox.BorderThickness = new Thickness(0.5, 0.5, 0.5, 0.5);
-        }
-
-        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }

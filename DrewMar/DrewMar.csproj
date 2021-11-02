@@ -96,6 +96,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AutoClosingMessageBox.cs" />
+    <Compile Include="Domain\Package.cs" />
+    <Compile Include="Domain\Transport.cs" />
+    <Compile Include="Domain\WoodenBoard.cs" />
+    <Compile Include="FeatureFlags.cs" />
+    <Compile Include="XlsxFileExporter.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -104,6 +110,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IFileExporter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
