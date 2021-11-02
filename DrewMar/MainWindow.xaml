@@ -6,33 +6,54 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DrewMar"
         mc:Ignorable="d"
-        Title="DrewMar" Height="458" Width="650">
+                      
+        Title="DrewMar" Height="900" Width="562" Controls:ScrollViewerHelper.IsHorizontalScrollWheelEnabled="True" Background="White">
 
-    <Grid Width="650" Height="410">
+    <Grid Margin="0,0,2,0">
         <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="0*"/>
+            <RowDefinition Height="92*"/>
+            <RowDefinition Height="85*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="32*"/>
-            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="33*"/>
+            <ColumnDefinition Width="33*"/>
+            <ColumnDefinition Width="33*"/>
             <ColumnDefinition Width="33*"/>
         </Grid.ColumnDefinitions>
-        <Button x:Name="dodajDeskeButton" Content="Dodaj deske" HorizontalAlignment="Left" Margin="96,252,0,0" VerticalAlignment="Top" Width="142" Click="button_Click" Height="27"/>
-        <Label x:Name="dlugoscLabel" Content="Długość" HorizontalAlignment="Left" Margin="10,19,0,0" VerticalAlignment="Top" Height="58" Width="151" FontSize="36"/>
-        <Label x:Name="szerokoscLabel" Content="Szerokość" HorizontalAlignment="Left" Margin="5,87,0,0" VerticalAlignment="Top" FontSize="36" Height="58" Width="169"/>
-        <Label x:Name="gruboscLabel" Content="Grubość" HorizontalAlignment="Left" Margin="10,150,0,0" VerticalAlignment="Top" FontSize="36" Height="58" Width="142"/>
-        <Button x:Name="dodajPaczkeButton" Content="Dodaj paczke" Grid.Column="2" HorizontalAlignment="Left" Margin="112,293,0,0" VerticalAlignment="Top" Width="126" Height="27" Click="dodajPaczkeButton_Click"/>
-        <Button x:Name="dodajDoTransportuButton" Content="Dodaj do transportu" HorizontalAlignment="Left" Margin="46,347,0,0" VerticalAlignment="Top" Width="175" Height="27"/>
-        <Label x:Name="iloscPaczekLabel" Content="iloscPaczek" HorizontalAlignment="Left" Height="27" Margin="255,347,0,0" VerticalAlignment="Top" Width="99" Grid.ColumnSpan="3"/>
-        <Label x:Name="wagaLabel" Content="Aktualna waga:" Grid.Column="2" HorizontalAlignment="Left" Margin="93,347,0,0" VerticalAlignment="Top" Height="26" Width="90"/>
-        <TextBox x:Name="wagaTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="26" Margin="195,347,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="76"/>
-        <TextBox x:Name="iloscPaczekTextBox" Grid.Column="2" HorizontalAlignment="Left" Height="26" Margin="10,347,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="53"/>
-        <ListBox x:Name="desksList" Grid.Column="2" HorizontalAlignment="Left" Height="260" Margin="51,19,0,0" VerticalAlignment="Top" Width="220" Background="#FFBFB9B9"/>
-        <Line X1="0" Y1="340" X2="650" Y2="340" Stroke="Black" StrokeThickness="2" Margin="0,-10,0,0" />
-        <TextBox x:Name="lenghtOfADeskTextBox" HorizontalAlignment="Left" Height="34" Margin="179,29,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="widthOfADeskTextBox" HorizontalAlignment="Left" Height="41" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="120" Margin="179,104,0,0"/>
-        <TextBox x:Name="thicknessOfADeskTextBox" HorizontalAlignment="Left" Height="40" Margin="179,168,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="dodajDeskeButton" Content="Dodaj deske" HorizontalAlignment="Left" Margin="10,247,0,0" VerticalAlignment="Top" Width="256" Click="button_Click" Height="50" FontSize="20" Grid.ColumnSpan="2"/>
+        <Label x:Name="dlugoscLabel" Content="Długość" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Height="58" Width="151" FontSize="36" Grid.ColumnSpan="2"/>
+        <Label x:Name="szerokoscLabel" Content="Szerokość" HorizontalAlignment="Left" Margin="10,108,0,0" VerticalAlignment="Top" FontSize="36" Height="58" Width="169" Grid.ColumnSpan="2"/>
+        <Label x:Name="gruboscLabel" Content="Grubość" HorizontalAlignment="Left" Margin="10,171,0,0" VerticalAlignment="Top" FontSize="36" Height="58" Width="142" Grid.ColumnSpan="2"/>
+        <Button x:Name="dodajPaczkeButton" Content="Dodaj paczke" Grid.Column="2" HorizontalAlignment="Left" Margin="20,316,0,0" VerticalAlignment="Top" Width="246" Height="51" Click="dodajPaczkeButton_Click" FontSize="20" Grid.ColumnSpan="2"/>
+        <Button x:Name="dodajDoTransportuButton" Content="Dodaj transport" HorizontalAlignment="Left" Margin="10,379,0,0" VerticalAlignment="Top" Width="256" Height="47" Click="dodajDoTransportuButton_Click" FontSize="20" Grid.ColumnSpan="2"/>
+        <Label x:Name="numberOfPackagesLabel" Content="NR PACZKI" HorizontalAlignment="Left" Height="47" Margin="16,379,0,0" VerticalAlignment="Top" Width="122" Grid.Column="2" FontSize="20"/>
+        <Label x:Name="packageWeightLabel" Content="Aktualna masa paczki:" HorizontalAlignment="Left" Margin="22,328,0,0" VerticalAlignment="Top" Height="28" Width="134" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="actualPackageWeightTextBox" Grid.Column="3" HorizontalAlignment="Left" Height="26" Margin="38,328,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="90" TextChanged="wagaTextBox_TextChanged" Grid.Row="1"/>
+        <TextBox x:Name="numberOfPackagesTextBox" HorizontalAlignment="Left" Height="47" Margin="52,379,0,0" Text="1" VerticalAlignment="Top" Width="47" Grid.Column="3" FontSize="30" TextAlignment="Center" RenderTransformOrigin="0.435,0.581" TextWrapping="Wrap" IsEnabled="False"/>
+        <ListBox x:Name="desksList" Grid.Column="2" HorizontalAlignment="Left" Height="198" Margin="64,107,0,0" VerticalAlignment="Top" Width="148" Background="#FFBFB9B9" Grid.ColumnSpan="2" />
+        <Line X1="0" Y1="340" X2="650" Y2="340" Stroke="Black" StrokeThickness="2" Margin="0,112,0,313" Grid.ColumnSpan="4" Grid.RowSpan="2" />
+        <TextBox x:Name="lengthOfADeskTextBox" HorizontalAlignment="Left" Height="58" Margin="18,45,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="110" FontSize="36" GotFocus="lenghtOfADeskTextBox_GotFocus" MaxLength="2" BorderThickness="1" Grid.Column="1" />
+        <TextBox x:Name="widthOfADeskTextBox" HorizontalAlignment="Left" Height="58" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="110" Margin="18,108,0,0" FontSize="36" MaxLength="2" Grid.Column="1"/>
+        <TextBox x:Name="thicknessOfADeskTextBox" HorizontalAlignment="Left" Height="58" Margin="18,171,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="110" FontSize="36" MaxLength="3" Grid.Column="1"/>
+        <Label x:Name="transportWeightLabel" Content="Aktualna masa transportu:" HorizontalAlignment="Left" Margin="22,361,0,0" VerticalAlignment="Top" Height="27" Width="149" RenderTransformOrigin="0.982,1.963" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <TextBox x:Name="actualTransportWeightTextBox" Grid.Column="3" HorizontalAlignment="Left" Height="26" Margin="38,361,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="90" TextChanged="wagaTextBox_TextChanged" RenderTransformOrigin="0.484,2.683" Grid.Row="1"/>
+        <TextBox x:Name="numberOfDesksTextBox" HorizontalAlignment="Left" Height="56" Margin="65,302,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" RenderTransformOrigin="0.579,1.733" FontSize="40" TextAlignment="Center" IsEnabled="False" Text="0" Grid.Column="1"/>
+        <Label x:Name="numberOfDesksLabel" Content="SZTUKI&#xD;&#xA;" HorizontalAlignment="Left" Height="56" Margin="10,302,0,0" VerticalAlignment="Top" Width="128" RenderTransformOrigin="0.475,1.521" FontSize="36"/>
+        <Button x:Name="deleteLastDeskButton" Content="X" Grid.Column="3" HorizontalAlignment="Left" Height="49" Margin="79,121,0,0" VerticalAlignment="Top" Width="54" Click="buttonDeleteLastDeskClicked" FontSize="18"/>
+        <ComboBox x:Name="comboBox" HorizontalAlignment="Left" Height="44" Margin="39,59,0,0" VerticalAlignment="Top" Width="198" Text="XX" Grid.Column="2" FontSize="20" Grid.ColumnSpan="2" SelectionChanged="comboBox_SelectionChanged" />
+        <Label x:Name="WorkerLabel" Content="       Osoba" HorizontalAlignment="Left" Height="39" Margin="72,14,0,0" VerticalAlignment="Top" Width="129" FontSize="18" Grid.Column="2" Grid.ColumnSpan="2"/>
+        <Button x:Name="buttonNumpad1" Content="1" Height="95" Margin="33,12,0,0" VerticalAlignment="Top" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" HorizontalAlignment="Left" Width="95" Grid.Row="1"/>
+        <Button x:Name="buttonNumpad2" Content="2" HorizontalAlignment="Left" Height="95" Margin="23,12,0,0" VerticalAlignment="Top" Width="95" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Column="1" Grid.Row="1"/>
+        <Button x:Name="buttonNumpad3" Content="3" Height="95" Margin="10,12,0,0" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Column="2" Width="95" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1"/>
+        <Button x:Name="buttonNumpad4" Content="4" Height="95" Margin="33,112,0,0" VerticalAlignment="Top" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" HorizontalAlignment="Left" Width="95" Grid.Row="1"/>
+        <Button x:Name="buttonNumpad5" Content="5" HorizontalAlignment="Left" Height="95" Margin="23,112,0,0" VerticalAlignment="Top" Width="95" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Column="1" Grid.Row="1"/>
+        <Button x:Name="buttonNumpad6" Content="6" Height="95" Margin="10,112,0,0" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Column="2" Width="95" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1"/>
+        <Button x:Name="buttonNumpad7" Content="7" HorizontalAlignment="Left" Height="95" Margin="33,212,0,0" VerticalAlignment="Top" Width="95" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Row="1"/>
+        <Button x:Name="buttonNumpad8" Content="8" HorizontalAlignment="Left" Height="95" Margin="23,212,0,0" VerticalAlignment="Top" Width="95" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Row="1" Grid.Column="1"/>
+        <Button x:Name="buttonNumpad9" Content="9" Height="95" Margin="10,212,0,0" Width="95" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Button x:Name="buttonNumpad0" Content="0" HorizontalAlignment="Left" Height="95" Margin="23,312,0,0" VerticalAlignment="Top" Width="95" RenderTransformOrigin="1,-0.224" Click="OnNumericalButtonClick" IsCancel="True" FontSize="36" Grid.Row="1" Grid.Column="1"/>
+        <Button x:Name="enterButton" Content="⇨" Grid.Column="3" HorizontalAlignment="Left" Margin="13,163,0,0" VerticalAlignment="Top" Width="115" Height="94" Click="EnterButtonClick" FontSize="48" Grid.Row="1"/>
+        <Button x:Name="deleteButton" Content="←" HorizontalAlignment="Left" Height="95" Margin="13,43,0,0" VerticalAlignment="Top" Width="115" RenderTransformOrigin="1,-0.224" Click="deleteButtonClick" IsCancel="True" FontSize="48" Grid.Column="3" Foreground="Red" Grid.Row="1"/>
     </Grid>
 
 </Controls:MetroWindow>
